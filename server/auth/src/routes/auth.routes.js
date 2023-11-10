@@ -3,9 +3,6 @@ const router = Router()
 const _var = require("../global/_var.js")
 const controller = require("../controllers/auth.controller.js")
 
-router.get(_var.ROOT, (req, res) => {
-  res.send("Hello World")
-});
 
 // ----- Statistics -----
 router.get(_var.STATS, async (req, res) => {
