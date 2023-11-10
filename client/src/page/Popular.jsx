@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getVideos } from '../api/apiHome';
-import '../styles/Home.css';
+import { getVideos } from '../api/apiPopular';
 
-const Home = () => {
+const Popular = ({ videos: initialVideos, redirect }) => {
   const [videos, setVideos] = useState([]);
 
-  // Obtén la función de navegación
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Llamada a la función getVideos dentro de useEffect
     getVideos().then((data) => {
       if (data && data.data) {
-        // Hacer algo con los datos
         setVideos(data.data);
       } else {
-        // Manejar el caso de error
         console.log('Error al obtener los videos');
       }
     });
@@ -27,6 +22,7 @@ const Home = () => {
       {videos.map((video) => (
         <div className="video-card" key={video.id_video} onClick={() => redirect(video)}>
           <h3 className="video-title">{video.title_video}</h3>
+          <h3 className="video-title">Points: {video.score_video}</h3>
           <button className="watch-button" onClick={() => redirect(video)}>
             Ver Video
           </button>
@@ -40,5 +36,4 @@ const Home = () => {
   }
 };
 
-export default Home;
-
+export default Popular;

@@ -3,6 +3,7 @@ const _var = require("../global/_var.js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
+// ----- User statistics information -----
 const getDataUser = async ({ data }) => {
   try {
     let msg = {
@@ -11,7 +12,6 @@ const getDataUser = async ({ data }) => {
       code: 404
     };
 
-    // Obtener la cantidad de likes y dislikes dados
     let sqlReactions = `
       SELECT
         (SELECT COUNT(*) FROM reaction WHERE id_user = $1 AND type_reaction = 'like') AS like_count,
@@ -19,7 +19,6 @@ const getDataUser = async ({ data }) => {
     `;
     let reactionStats = await pool.query(sqlReactions, [id_user]);
 
-    // Obtener la cantidad de videos vistos
     let sqlVideoVisits = `
       SELECT COUNT(*) AS video_visit_count
       FROM video_visits
@@ -27,7 +26,6 @@ const getDataUser = async ({ data }) => {
     `;
     let videoVisitStats = await pool.query(sqlVideoVisits, [id_user]);
 
-    // Obtener la cantidad de comentarios realizados y en qué videos
     let sqlComments = `
       SELECT
         COUNT(*) AS comment_count,
@@ -46,7 +44,6 @@ const getDataUser = async ({ data }) => {
           CantDislikes: reactionStats.rows[0].dislike_count || 0,
           CantVisitVideos: videoVisitStats.rows[0].video_visit_count || 0,
           CantComment: commentStats.rows[0].comment_count || 0,
-          VideosCommented: commentStats.rows[0].commented_videos || []
         },
         code: 200
       };
@@ -64,7 +61,7 @@ const getDataUser = async ({ data }) => {
   }
 };
 
-
+// ----- Login info -----
 const getUser = async ({ data }) => {
   try {
     let msg = {
@@ -102,6 +99,7 @@ const getUser = async ({ data }) => {
   }
 };
 
+// ----- Save User -----
 const regUser = async ({ data }) => {
   try {
     let msg = {
@@ -139,6 +137,7 @@ const regUser = async ({ data }) => {
   }
 }
 
+// ----- Verify User -----
 const verifyUser = async ({data}) => {
   try {
     let msg = {
@@ -153,8 +152,7 @@ const verifyUser = async ({data}) => {
     let tokenInfo = {
       id_user: user.rows[0].id_user,
       username: user.rows[0].username,
-      email: user.rows[0].email,
-      password: password
+      email: user.rows[0].email
     }
 
     if (user.rows.length > 0) {

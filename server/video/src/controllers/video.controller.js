@@ -116,7 +116,6 @@ const regVisit = async ({data}) => {
     
     let sql = `INSERT INTO video_visits (id_video , id_user) VALUES ('${id_video}', '${id_user}');`
     const video = await pool.query(sql)
-    console.log(video.rowCount)
     if (video.rowCount > 0) {
       msg = {
         status: true,
@@ -271,7 +270,7 @@ const getHistory = async ({ data }) => {
   }
 };
 
-
+// ----- Most popular videos -----
 const getPopular = async () => {
   try {
     let msg;
@@ -336,7 +335,6 @@ const getPoints = async () => {
       code: 404
     };
 
-    // Actualizar score_video en la tabla video sumando 100 puntos
     let sqlUpdate = `UPDATE video SET score_video = score_video + 100 RETURNING *;`;
     let updatedVideos = await pool.query(sqlUpdate);
 
@@ -344,7 +342,6 @@ const getPoints = async () => {
       msg = {
         status: true,
         message: "All videos updated successfully, 100 points added to score_video",
-        data: updatedVideos.rows,
         code: 200
       };
     }
@@ -361,9 +358,6 @@ const getPoints = async () => {
     return msg;
   }
 };
-
-
-
 
 module.exports = {
   verifyVideo,

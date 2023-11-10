@@ -1,5 +1,6 @@
 const { pool } = require("../models/postgre.connect.js")
 
+// ----- Number of reactions -----
 const getCantReact = async ({ data }) => {
   try {
     let msg = {
@@ -45,9 +46,8 @@ const getCantReact = async ({ data }) => {
     return msg;
   }
 };
-;
 
-
+// ----- Show reactions -----
 const getReaction = async ({ data }) => {
   try {
     let msg = {
@@ -92,6 +92,7 @@ const getReaction = async ({ data }) => {
   }
 };
 
+// ----- Check reaction -----
 const verifyReaction = async ({ data }) => {
   try {
     let msg = {
@@ -112,7 +113,7 @@ const verifyReaction = async ({ data }) => {
       const existingType = existingReaction.rows[0].type_reaction
       
       if (existingType == type_reaction) {
-      console.log("Misma reaccion")
+    
       sql = `DELETE FROM reaction WHERE id_video = $1 AND id_user = $2;`;
       await pool.query(sql, [id_video, id_user]);
         
@@ -163,7 +164,7 @@ const verifyReaction = async ({ data }) => {
   }
 };
 
-  
+// ----- Create Reaction -----
 const regReaction = async ({ data }) => {
   try {
     let msg = {
@@ -174,8 +175,6 @@ const regReaction = async ({ data }) => {
 
     let sql = `INSERT INTO reaction (id_video, id_user, type_reaction) VALUES ('${id_video}', '${id_user}', '${type_reaction}');`
     const reaction = await pool.query(sql)
-
-    console.log(reaction.rowCount)
 
     if (reaction.rowCount > 0) {
       if (type_reaction == 'dislike') {

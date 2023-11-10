@@ -14,6 +14,10 @@ const Header = () => {
           <li><a href="/home">Home</a></li>
           <li><a href="/login">Login</a></li>
           <li><a href="/">Register</a></li>
+          <li><a href="/register-videos">Register Videos</a></li>
+          <li><a href="/popular">Popular</a></li>
+          <li><a href="/history">History</a></li>
+          <li><a href="/statistics">Statistics</a></li>
         </ul>
       </nav>
     </header>

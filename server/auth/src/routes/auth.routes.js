@@ -7,6 +7,7 @@ router.get(_var.ROOT, (req, res) => {
   res.send("Hello World")
 });
 
+// ----- Statistics -----
 router.get(_var.STATS, async (req, res) => {
   try {
     const data = { id_user } = req.params
@@ -17,6 +18,7 @@ router.get(_var.STATS, async (req, res) => {
   }
 });
 
+// ----- Register -----
 router.post(_var.REGISTER, async (req, res) => {
   try {
     const data = { username, email, password } = req.body
@@ -35,6 +37,7 @@ router.post(_var.REGISTER, async (req, res) => {
   }
 })
 
+// ----- Login -----
 router.post(_var.LOGIN, async (req, res) => {
   try {
     const data = { email, password } = req.body

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { signUp } from '../api/apiRegister'
+import { signUp } from '../api/apiRegister';
 import { useNavigate } from 'react-router-dom';
+import '../styles/Register.css';
 
-
-const RegisterForm = () => {
+const Register = () => {
   const nav = useNavigate();
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -29,7 +30,7 @@ const RegisterForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="register-form" onSubmit={handleSubmit}>
       <div>
         <label htmlFor="username">Username:</label>
         <input
@@ -64,9 +65,10 @@ const RegisterForm = () => {
         />
       </div>
       <button type="submit">Registrar</button>
-      <button type='button' onClick={() =>nav('/login')}>Login</button>
+      <br/>
+      <button type='button' onClick={() => nav('/login')}>Login</button>
     </form>
   );
 };
 
-export default RegisterForm;
+export default Register;

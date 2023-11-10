@@ -1,8 +1,30 @@
-# React + Vite
+# Bienvenido al Proyecto Creado con Create-Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Inicio Rápido
+Para comenzar, sigue estos simples pasos:
 
-Currently, two official plugins are available:
+Descarga la paqueteria de la app
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+``` bash
+npm i
+```
+
+Luego ejecuta el servidor de desarrollo con el siguiente comando:
+
+``` bash
+npm run dev
+```
+
+Esto iniciará el servidor y mostrará la URL en tu consola.
+
+Abre la URL proporcionada en tu navegador para ver el resultado de tu proyecto.
+
+Explora una variedad de enlaces que te redirigirán a videos alojados en YouTube.
+
+## Despliegue en Render
+Considera Render como una opción muy viable para implementar todos tus proyectos de React con Vite. Render proporciona una plataforma eficiente y fácil de usar para la implementación de aplicaciones web, asegurando un proceso de despliegue suave y confiable.
+
+
+
+
+NOTA: Este proyecto aun esta en proceso de construcción
