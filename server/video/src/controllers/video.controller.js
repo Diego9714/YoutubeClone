@@ -42,7 +42,6 @@ const regVideo = async ({data}) => {
     
     let sql = `INSERT INTO video (title_video , url_video , score_video ) VALUES ('${title_video}', '${url_video}', '${0}' );`
     const video = await pool.query(sql)
-    console.log(video.rowCount)
     if (video.rowCount > 0) {
       msg = {
         status: true,
@@ -74,14 +73,14 @@ const verifyVisit = async ({data}) => {
   try {
     let msg = {
       status: false,
-      message: "User not found",
+      message: "Video not yet seen",
       code: 200
     }
-
-    let sql = `SELECT COUNT(id_video) FROM video_visits WHERE id_user = '${id_user}';`
+    
+    let sql = `SELECT id_video FROM video_visits WHERE id_user = '${id_user}' AND id_video = '${id_video}';`
     let video = await pool.query(sql)
 
-    if (video.rows[0].count == 1) {
+    if (video.rows.length > 0 && video.rows[0].id_video == id_video) {
       msg = {
         status: true,
         message: "Video already seen",
@@ -97,16 +96,22 @@ const verifyVisit = async ({data}) => {
     }
     return msg
   } catch (error) {
-    return error
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: error
+    }
+    return msg
   }
-};
+}
 
 const regVisit = async ({data}) => {
   try {
     let msg = {
       status: false,
-      message: "Video not found",
-      code: 200
+      message: "video not seen",
+      code: 500
     }
     
     let sql = `INSERT INTO video_visits (id_video , id_user) VALUES ('${id_video}', '${id_user}');`
@@ -121,7 +126,7 @@ const regVisit = async ({data}) => {
     } else {
       msg = {
         status: false,
-        message: "Seen unseen successfully",
+        message: "video not seen",
         code: 500
       }
     }
@@ -138,9 +143,58 @@ const regVisit = async ({data}) => {
   }
 }
 
+// ----- View Video  -----
+const getVideo = async ({data}) => {
+  try {
+
+    let msg = {
+      status: false,
+      message: "Video not found",
+      code: 404
+    }
+
+    let sql  = `SELECT id_video, title_video, url_video
+    FROM video
+    WHERE id_video = '${id_video}';
+    `
+    let video = await pool.query(sql)
+    if (video.rows.length > 0) {
+      msg = {
+        status: true,
+        message: "videos found Succesfully",
+        code: 200,
+        data: video.rows
+      }
+    }else{
+      msg = {
+        status: false,
+        message: "video not found",
+        code: 404
+      }
+    } 
+    return msg     
+  } catch (err){
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: err
+    }
+    return msg
+  }
+}
+
+
 // ----- Random videos  -----
 const getAllVideos = async () => {
   try {
+
+    let msg = {
+      status: false,
+      message: "Videos not found",
+      code: 500
+    }
+
     let sql  = `SELECT id_video, title_video, url_video
     FROM video
     ORDER BY RANDOM()
@@ -158,7 +212,7 @@ const getAllVideos = async () => {
       msg = {
         status: false,
         message: "videos not found",
-        code: 200
+        code: 404
       }
     } 
     return msg     
@@ -173,11 +227,128 @@ const getAllVideos = async () => {
   }
 }
 
+// ----- History of videos viewed by the user -----
+const getHistory = async ({ data }) => {
+  try {
+    let msg = {
+      status: false,
+      message: "Videos not found",
+      code: 500
+    };
+
+    let sql = `
+      SELECT video.id_video, video.title_video, video.url_video , video_visits.date_visited 
+      FROM video
+      JOIN video_visits ON video_visits.id_video = video.id_video
+      WHERE video_visits.id_user = $1
+      ORDER BY video_visits.date_visited DESC
+      LIMIT 10;
+    `;
+
+    let videos = await pool.query(sql, [id_user]);
+
+    if (videos.rows.length > 0) {
+      msg = {
+        status: true,
+        message: "Videos found successfully",
+        data: videos.rows,
+        code: 200
+      };
+    } else {
+      msg = {
+        status: false,
+        message: "Videos not found",
+        code: 404
+      };
+    }
+    return msg;
+  } catch (err) {
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: err
+    };
+    return msg;
+  }
+};
+
+
+const getPopular = async () => {
+  try {
+    let msg = {
+      status: false,
+      message: "No popular videos found for the current month",
+      code: 500
+    }
+
+    const currentDate = new Date();
+    const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+    const formattedFirstDay = firstDayOfMonth.toISOString().split('T')[0];
+    
+    let sql = `
+    WITH random_videos AS (
+      SELECT id_video, title_video, url_video, score_video
+      FROM video
+      ORDER BY random()
+      LIMIT 5
+    ), max_score_videos AS (
+      SELECT id_video, title_video, url_video, score_video
+      FROM video
+      WHERE score_video = (SELECT MAX(score_video) FROM video WHERE date_created >= $1)
+      ORDER BY random()
+      LIMIT 5
+    )
+
+    SELECT id_video, title_video, url_video, score_video
+    FROM (
+      SELECT id_video, title_video, url_video, score_video
+      FROM max_score_videos
+
+      UNION ALL
+
+      SELECT id_video, title_video, url_video, score_video
+      FROM random_videos
+    ) final_videos
+    ORDER BY score_video DESC
+    LIMIT 5;
+  `;
+
+    const videos = await pool.query(sql, [formattedFirstDay]);
+
+    if (videos.rows.length > 0) {
+      msg = {
+        status: true,
+        message: "Videos found successfully",
+        data: videos.rows,
+        code: 200
+      };
+    } else {
+      msg = {
+        status: false,
+        message: "No popular videos found for the current month",
+        code: 500
+      }
+    }
+    return msg;
+  } catch (err) {
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: err
+    };
+    return msg;
+  }
+}
 
 module.exports = {
   verifyVideo,
   regVideo,
+  getVideo,
   verifyVisit,
   regVisit,
-  getAllVideos
+  getAllVideos,
+  getHistory,
+  getPopular
 }

@@ -12,11 +12,11 @@ router.post(_var.REGISTER, async (req, res) => {
     const data = { username, email, password } = req.body
     let user = await controller.getUser(data)
 
-    if (user.status)
+    if (user.code == 200)
       res
         .status(500)
         .json({ message: "User already registered", status: false })
-    else if (!user.status) {
+    else if (user.code == 404) {
       userReg = await controller.regUser(data)
       res.status(userReg.code).json(userReg)
     }
@@ -29,6 +29,7 @@ router.post(_var.LOGIN, async (req, res) => {
   try {
     const data = { email, password } = req.body
     const user  = await controller.verifyUser(data)
+    console.log(user)
     res.status(user.code).json(user)
   } catch (err) {
     res.status(500).json({ error: "Error al realizar la consulta" })

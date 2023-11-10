@@ -13,9 +13,11 @@ const PG_NAME                   = process.env._NAME
 
 // Users
 const UPLOAD_VIDEO              = process.env.UPLOAD_VIDEO
-const VISIT_VIDEO                = process.env.VISIT_VIDEO
+const VIEW_VIDEO                = process.env.VIEW_VIDEO
+const VISIT_VIDEO               = process.env.VISIT_VIDEO
 const ALL_VIDEOS                = process.env.ALL_VIDEOS
-
+const HISTORY                   = process.env.HISTORY
+const POPULAR                   = process.env.POPULAR
 
 module.exports = {
 	// Server
@@ -23,5 +25,5 @@ module.exports = {
   // Database
   PG_HOST, PG_USER, PG_PASS, PG_NAME,
   // Users - Login
-  UPLOAD_VIDEO, VISIT_VIDEO, ALL_VIDEOS
+  UPLOAD_VIDEO, VIEW_VIDEO , VISIT_VIDEO, ALL_VIDEOS,HISTORY,POPULAR
 }

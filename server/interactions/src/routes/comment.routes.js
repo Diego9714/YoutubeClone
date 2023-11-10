@@ -20,11 +20,7 @@ router.get(_var.ALL_COMMENTS, async (req, res) => {
 router.post(_var.COMMENT, async (req, res) => {
   try {
     const data = { id_video , id_user , content_comment } = req.body
-
-    console.log(data)
-
     comment = await controller.regComment(data)
-    console.log(comment)
     res.status(comment.code).json(comment)
   } catch (err) {
     res.status(500).json({ error: "Error al realizar la consulta" })
