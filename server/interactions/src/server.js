@@ -5,6 +5,8 @@ const cors    = require('cors')
 
 // Url-Routes
 const comment = require('./routes/comment.routes.js')
+const reaction = require('./routes/reaction.routes.js')
+
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
@@ -18,3 +20,4 @@ app.listen(_var.PORT, (err) => {
 
 // Routes
 app.use(comment)
+app.use(reaction)
