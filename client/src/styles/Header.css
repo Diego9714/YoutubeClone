@@ -1,0 +1,43 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #FF0000; /* Color de fondo similar al de YouTube */
+    padding: 10px 20px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+    color: #FFF; /* Color de texto blanco similar al de YouTube */
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .logo img {
+    width: 40px; /* Ajusta el tamaño de tu logotipo */
+    margin-right: 10px;
+  }
+  
+  .navigation ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+  }
+  
+  .navigation li {
+    margin-right: 20px;
+    font-size: 18px;
+  }
+  
+  .navigation a {
+    text-decoration: none;
+    color: #FFF; /* Color de texto blanco similar al de YouTube */
+    transition: color 0.3s;
+  }
+  
+  .navigation a:hover {
+    color: #f8d5ce; /* Cambia el color al pasar el mouse similar al de YouTube */
+  }
+  

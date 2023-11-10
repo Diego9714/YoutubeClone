@@ -1,12 +1,6 @@
 const { pool } = require("../models/postgre.connect.js")
 
-let msg = {
-  status: false,
-  message: "Error retrieving database",
-  data: [],
-  code: 500
-}
-
+// ----- Verification and registration of videos -----
 const verifyVideo = async ({data}) => {
   try {
     let msg = {
@@ -29,7 +23,7 @@ const verifyVideo = async ({data}) => {
       msg = {
         status: false,
         message: "This video does not exist",
-        code: 200
+        code: 404
       }
     }
     return msg
@@ -46,9 +40,9 @@ const regVideo = async ({data}) => {
       code: 500
     }
     
-    let sql = `INSERT INTO video ( id_user , title_video , url_video , score_video ) VALUES ('${id_user}', '${title_video}', '${url_video}', '${0}' );`
+    let sql = `INSERT INTO video (title_video , url_video , score_video ) VALUES ('${title_video}', '${url_video}', '${0}' );`
     const video = await pool.query(sql)
-    
+    console.log(video.rowCount)
     if (video.rowCount > 0) {
       msg = {
         status: true,
@@ -75,7 +69,39 @@ const regVideo = async ({data}) => {
   }
 }
 
-const getVideo = async ({data}) => {
+// ----- Verification and registration of visits -----
+const verifyVisit = async ({data}) => {
+  try {
+    let msg = {
+      status: false,
+      message: "User not found",
+      code: 200
+    }
+
+    let sql = `SELECT COUNT(id_video) FROM video_visits WHERE id_user = '${id_user}';`
+    let video = await pool.query(sql)
+
+    if (video.rows[0].count == 1) {
+      msg = {
+        status: true,
+        message: "Video already seen",
+        data: video.rows,
+        code: 200
+      }
+    } else {
+      msg = {
+        status: false,
+        message: "Video not yet seen",
+        code: 404
+      }
+    }
+    return msg
+  } catch (error) {
+    return error
+  }
+};
+
+const regVisit = async ({data}) => {
   try {
     let msg = {
       status: false,
@@ -83,58 +109,24 @@ const getVideo = async ({data}) => {
       code: 200
     }
     
-    let sql = 'SELECT title_video , url_video FROM video WHERE title_video = $1;'
-    let video = await pool.query(sql, [title_video])
-
-    if (video.rows.length > 0) {
-
-      let data = {
-        title_video: video.rows[0].title_video,
-        url_video: video.rows[0].url_video
-      } 
-      
+    let sql = `INSERT INTO video_visits (id_video , id_user) VALUES ('${id_video}', '${id_user}');`
+    const video = await pool.query(sql)
+    console.log(video.rowCount)
+    if (video.rowCount > 0) {
       msg = {
         status: true,
-        message: "Video found successfully",
-        code: 200 ,
-        info:data
-      }
-    }
-
-    return msg
-
-  } catch (err) {
-    let msg = {
-      status: false,
-      message: "Something went wrong...",
-      code: 500,
-      error: err
-    }
-    return msg
-  }
-}
-
-const getAllVideos = async () => {
-  try {
-    const response = await fetch('https://example.com/api/videos');
-    const data = await response.json();
-
-    if (data.length > 0) {
-      msg = {
-        status: true,
-        message: "Videos found successfully",
-        data: data,
+        message: "Viewed successfully",
         code: 200
       }
     } else {
       msg = {
         status: false,
-        message: "Videos not found",
-        code: 200
+        message: "Seen unseen successfully",
+        code: 500
       }
-    } 
+    }
+    return msg
 
-    return msg     
   } catch (err) {
     let msg = {
       status: false,
@@ -146,41 +138,46 @@ const getAllVideos = async () => {
   }
 }
 
-
-// const getAllVideos = async () => {
-//   try {
-//     let sql  = `SELECT id_video , title_video FROM video;`
-//     let video = await pool.query(sql)
-//     if (video.rows.length > 0) {
-//       msg = {
-//         status: true,
-//         message: "videos found Succesfully",
-//         data: video.rows,
-//         code: 200
-//       }
-//     }else{
-//       msg = {
-//         status: false,
-//         message: "videos not found",
-//         code: 200
-//       }
-//     } 
-//     return msg     
-//   } catch (err){
-//     let msg = {
-//       status: false,
-//       message: "Something went wrong...",
-//       code: 500,
-//       error: err
-//     }
-//     return msg
-//   }
-// }
+// ----- Random videos  -----
+const getAllVideos = async () => {
+  try {
+    let sql  = `SELECT id_video, title_video, url_video
+    FROM video
+    ORDER BY RANDOM()
+    LIMIT 10;
+    `
+    let video = await pool.query(sql)
+    if (video.rows.length > 0) {
+      msg = {
+        status: true,
+        message: "videos found Succesfully",
+        data: video.rows,
+        code: 200
+      }
+    }else{
+      msg = {
+        status: false,
+        message: "videos not found",
+        code: 200
+      }
+    } 
+    return msg     
+  } catch (err){
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: err
+    }
+    return msg
+  }
+}
 
 
 module.exports = {
   verifyVideo,
   regVideo,
-  getVideo,
+  verifyVisit,
+  regVisit,
   getAllVideos
 }

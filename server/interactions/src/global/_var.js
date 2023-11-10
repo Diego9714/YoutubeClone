@@ -12,9 +12,9 @@ const PG_NAME                   = process.env._NAME
 /* ----------- ROUTES ----------- */
 
 // Users
-const UPLOAD_VIDEO              = process.env.UPLOAD_VIDEO
-const VISIT_VIDEO                = process.env.VISIT_VIDEO
-const ALL_VIDEOS                = process.env.ALL_VIDEOS
+const REACTION                  = process.env.REACTION
+const COMMENT                   = process.env.COMMENT
+const REPLY                     = process.env.REPLY
 
 
 module.exports = {
@@ -23,5 +23,5 @@ module.exports = {
   // Database
   PG_HOST, PG_USER, PG_PASS, PG_NAME,
   // Users - Login
-  UPLOAD_VIDEO, VISIT_VIDEO, ALL_VIDEOS
+  REACTION, COMMENT, REPLY
 }
