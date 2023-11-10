@@ -29,6 +29,8 @@ router.get(_var.VIEW_VIDEO, async (req, res) => {
   try {
     const data = { id_video } = req.params
     const videos  = await controller.getVideo(data)
+    console.log(videos)
+
     res.status(videos.code).json(videos)
   } catch (err) {
     res.status(500).json({ error: "Error al realizar la consulta" })
@@ -83,6 +85,17 @@ router.get(_var.POPULAR, async (req, res) => {
     res.status(video.code).json(video)
   } catch (err) {
     res.status(500).json({ error: "Error al realizar la consulta" })
+  }
+})
+
+// Points Video
+router.get(_var.POINTS, async (req, res) => {
+  try {
+    const points  = await controller.getPoints()
+    console.log(points)
+    res.status(points.code).json(points)
+  } catch (err) {
+    res.status(500).json({ error: "Error al realizar la consulta" , msg: err})
   }
 })
 

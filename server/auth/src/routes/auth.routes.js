@@ -7,6 +7,16 @@ router.get(_var.ROOT, (req, res) => {
   res.send("Hello World")
 });
 
+router.get(_var.STATS, async (req, res) => {
+  try {
+    const data = { id_user } = req.params
+    const user  = await controller.getDataUser(data)
+    res.status(user.code).json(user)
+  } catch (err) {
+    res.status(500).json({ error: "Error al realizar la consulta" })
+  }
+});
+
 router.post(_var.REGISTER, async (req, res) => {
   try {
     const data = { username, email, password } = req.body
@@ -29,7 +39,6 @@ router.post(_var.LOGIN, async (req, res) => {
   try {
     const data = { email, password } = req.body
     const user  = await controller.verifyUser(data)
-    console.log(user)
     res.status(user.code).json(user)
   } catch (err) {
     res.status(500).json({ error: "Error al realizar la consulta" })

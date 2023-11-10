@@ -1,21 +1,34 @@
 const { pool } = require("../models/postgre.connect.js")
 
-const getComment = async () => {
+const getComment = async ({data}) => {
   try {
-    let sql  = `SELECT id_comment , content_comment FROM comment WHERE id_video = '${id_video}';`
-    let video = await pool.query(sql)
-    if (video.rows.length > 0) {
+    let msg = {
+      status: false,
+      message: "Comments not found",
+      code: 404
+    }
+
+    let sql = `
+    SELECT comment.id_comment, comment.id_video, comment.id_user, users.username , comment.content_comment 
+    FROM comment
+    JOIN users ON comment.id_user = users.id_user
+    WHERE comment.id_video = $1;
+  `;
+
+    let comments = await pool.query(sql, [id_video]);
+
+    if (comments.rows.length > 0) {
       msg = {
         status: true,
-        message: "videos found Succesfully",
-        data: video.rows,
-        code: 200
+        message: "Comments found Succesfully",
+        code: 200,
+        data: comments.rows
       }
     }else{
       msg = {
         status: false,
-        message: "videos not found",
-        code: 200
+        message: "Comments not found",
+        code: 404
       }
     } 
     return msg     

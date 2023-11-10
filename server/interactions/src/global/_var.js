@@ -16,6 +16,8 @@ const ALL_COMMENTS              = process.env.ALL_COMMENTS
 const COMMENT                   = process.env.COMMENT
 
 // Reactions
+const ALL_REACTIONS              = process.env.ALL_REACTIONS
+const VIEW_REACTIONS              = process.env.VIEW_REACTIONS
 const REACTION                   = process.env.REACTION
 
 
@@ -27,5 +29,5 @@ module.exports = {
   // Users - Login
   ALL_COMMENTS, COMMENT,
   // Reactions
-  REACTION
+  ALL_REACTIONS, VIEW_REACTIONS , REACTION
 }

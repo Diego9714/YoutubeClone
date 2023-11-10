@@ -13,6 +13,8 @@ const PG_NAME                   = process.env._NAME
 
 // Users
 const ROOT                      = process.env.ROOT
+const STATS                      = process.env.STATS
+
 const KEY                      = process.env.KEY
 const REGISTER                  = process.env.REGISTER
 const LOGIN                     = process.env.LOGIN
@@ -23,5 +25,5 @@ module.exports = {
   // Database
   PG_HOST, PG_USER, PG_PASS, PG_NAME,
   // Users - Login
-  ROOT, REGISTER, LOGIN , KEY
+  ROOT, REGISTER, LOGIN , KEY , STATS
  }

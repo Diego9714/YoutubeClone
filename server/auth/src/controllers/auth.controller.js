@@ -3,6 +3,68 @@ const _var = require("../global/_var.js")
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
 
+const getDataUser = async ({ data }) => {
+  try {
+    let msg = {
+      status: false,
+      message: "User not found",
+      code: 404
+    };
+
+    // Obtener la cantidad de likes y dislikes dados
+    let sqlReactions = `
+      SELECT
+        (SELECT COUNT(*) FROM reaction WHERE id_user = $1 AND type_reaction = 'like') AS like_count,
+        (SELECT COUNT(*) FROM reaction WHERE id_user = $1 AND type_reaction = 'dislike') AS dislike_count;
+    `;
+    let reactionStats = await pool.query(sqlReactions, [id_user]);
+
+    // Obtener la cantidad de videos vistos
+    let sqlVideoVisits = `
+      SELECT COUNT(*) AS video_visit_count
+      FROM video_visits
+      WHERE id_user = $1;
+    `;
+    let videoVisitStats = await pool.query(sqlVideoVisits, [id_user]);
+
+    // Obtener la cantidad de comentarios realizados y en qué videos
+    let sqlComments = `
+      SELECT
+        COUNT(*) AS comment_count,
+        ARRAY_AGG(DISTINCT id_video) AS commented_videos
+      FROM comment
+      WHERE id_user = $1;
+    `;
+    let commentStats = await pool.query(sqlComments, [id_user]);
+
+    if (reactionStats.rows.length > 0 || videoVisitStats.rows.length > 0 || commentStats.rows.length > 0) {
+      msg = {
+        status: true,
+        message: "User found",
+        data: {
+          CantLikes: reactionStats.rows[0].like_count || 0,
+          CantDislikes: reactionStats.rows[0].dislike_count || 0,
+          CantVisitVideos: videoVisitStats.rows[0].video_visit_count || 0,
+          CantComment: commentStats.rows[0].comment_count || 0,
+          VideosCommented: commentStats.rows[0].commented_videos || []
+        },
+        code: 200
+      };
+    }
+
+    return msg;
+  } catch (error) {
+    let msg = {
+      status: false,
+      message: "Something went wrong...",
+      code: 500,
+      error: error,
+    };
+    return msg;
+  }
+};
+
+
 const getUser = async ({ data }) => {
   try {
     let msg = {
@@ -139,6 +201,7 @@ const verifyUser = async ({data}) => {
 }
 
 module.exports = {
+  getDataUser,
   getUser,
   regUser,
   verifyUser
